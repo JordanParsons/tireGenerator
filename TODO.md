@@ -1,4 +1,4 @@
-#TODO#
--Clean, clean clean
--Shoe Insert
--Fix OPENGL Stuff
+###TODO###
+*Clean, clean clean
+*Shoe Insert
+*Solve openGL Issues

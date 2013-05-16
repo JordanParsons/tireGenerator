@@ -1855,24 +1855,17 @@ class ReBuilderv2 extends Thread {
 		for (Polygon2D region : voronoiBuild.getRegions()) {
 			prog++;
 			for (Vec2D v : region.vertices) {
+				// round them slightly was 100000
 				v.x = (float) (Math.round(v.x * Math.pow(10, sketchRef.cVoronoiRound)) / Math
-						.pow(10, sketchRef.cVoronoiRound)); // round
-				// them
-				// slightly
-				// was
-				// 100000
+						.pow(10, sketchRef.cVoronoiRound)); 
+				
 				v.y = (float) (Math.round(v.y * Math.pow(10, sketchRef.cVoronoiRound)) / Math
 						.pow(10, sketchRef.cVoronoiRound)); // round
 				// if its in the bounds, if we haven't picked it already
 				// (rounding could group some points)
 				// and we pick every 5th point to just reduce the inital set a
 				// little
-				if (bound.containsPoint(v) && uniqueVerts.contains(v) == false) { // &&
-																					// n
-																					// %
-																					// 5
-																					// ==
-																					// 0
+				if (bound.containsPoint(v) && uniqueVerts.contains(v) == false) {
 					uniqueVerts.add(v);
 				}
 			}
