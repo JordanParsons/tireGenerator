@@ -1,15 +1,6 @@
 package tireGenerator;
 
 //===============================================================
-//TODO:
-//Clean
-//Comment
-//More Tire Files
-//OSX Safe?
-//Shoe thing
-//===============================================================
-
-//===============================================================
 //Imports
 import controlP5.*;
 import processing.core.*;
