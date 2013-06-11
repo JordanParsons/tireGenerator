@@ -1,6 +1,14 @@
 package tireGenerator;
 
 //===============================================================
+//TODO:
+//Clean
+//Comment
+//More Tire Files
+//OSX Safe?
+//===============================================================
+
+//===============================================================
 //Imports
 import controlP5.*;
 import processing.core.*;
@@ -15,14 +23,6 @@ import toxi.geom.mesh.*;
 import toxi.geom.mesh2d.*;
 import toxi.processing.*;
 
-/***
- * 
- * Tire Generator, generate messages on stuff!
- * 
- * @author Jordan Parsons
- * @author Golan Levin
- * 
- */
 public class TireGenerator extends PApplet {
 	private static final long serialVersionUID = 693924492789036865L;
 
@@ -37,8 +37,8 @@ public class TireGenerator extends PApplet {
 	// ===============================================================
 	// Drawing Instances of the meshes
 	TriangleMesh hubDraw;
-	WETriangleMesh tireDraw;
-	WETriangleMesh lettersDraw;
+	public WETriangleMesh tireDraw;
+	public WETriangleMesh lettersDraw;
 	Voronoi voronoiDraw;
 
 	// Other classes
@@ -61,26 +61,22 @@ public class TireGenerator extends PApplet {
 	boolean showTire = true;
 	boolean showNormals = true;
 	// GUI
-	boolean verbose = false; // Print detailed debugging information.
-	boolean advCtrls = false; // Show detailed sliders, may break code.
-	boolean showDebug = true; // Hide the message window.
+	boolean verbose = false;
+	boolean advCtrls = false;
+	boolean showDebug = true;
 	// Mesh options
 	boolean reverseLetters = false;
 	boolean repeat = false;
-	boolean vert = false; // Rotate the message 90* CCW.
-	// Mesh blocks of various shapes in the gap between the messages.
+	boolean vert = false;
 	boolean tireBlocking = true;
-	// If making a stamp, size it to the message instead of a preset size.
 	boolean autoStamp = false;
-	boolean revSTL = false; // Export a mirrored STL.
-	// Place bars above and below the message, shrinking it, but protecting its
-	// edges.
+	boolean revSTL = false;
 	boolean topBars = true;
 	// Status
-	boolean shapeLoaded = false; // Did someone pick a STL?
-	boolean building = false; // Is the build thread running?
-	boolean textLoaded = false; // Did someone set text?
-	boolean prog = false; // Is an operation in progress?
+	boolean shapeLoaded = false;
+	boolean building = false;
+	boolean textLoaded = false;
+	boolean prog = false;
 
 	// ===============================================================
 	// Voronoi Constants
@@ -129,21 +125,20 @@ public class TireGenerator extends PApplet {
 
 	// ===============================================================
 	// public info
-	long time = 0; // Run time
-	final int D_SF = 400; // Scale Factor
-	final int D_SF_2 = 200;// Scale Factor
-	final int DSIZE = 10000000; // Huge number to setup the DT.
-	int file = 99999; // Bogus number for the file picker.
-	int blockType = 0; // Selects the type of blocking to use
-	// float autoStampH = .25f; //Unused?
-	float treadDepth = .0625f; // Default tread depth
-	float patternSpace = 10; // Amount to space looped messages (I think)
-	String fileName = "";// Empty file picker name.
-	String textValue = null;// Empty text (tire message).
-	File hub; // The hub file
-	// Where the tires are stored
+	long time = 0;
+	final int D_SF = 400;
+	final int D_SF_2 = 200;
+	final int DSIZE = 10000000;
+	int file = 99999;
+	int blockType = 0;
+	float autoStampH = .25f;
+	float treadDepth = .0625f;
+	float patternSpace = 10;
+	String fileName = "";
+	String textValue = null;
+	File hub;
+
 	String path = sketchPath + "/data/tire_directory";
-	// List out all of the tire files right away.
 	ArrayList<File> allFiles = listFilesRecursive(path);
 
 	/**
@@ -161,12 +156,9 @@ public class TireGenerator extends PApplet {
 		// Setup geomerative
 		RG.init(this);
 		font = new RFont("ariblk.ttf", 256, RFont.LEFT); // seems to handle text
-															// best at 80
+															// best at 80+
 
-		// RCommand.setSegmentLength(3); //segmenting for text, may need to be
-		// even smaller
 		RCommand.setSegmentAngle(PI / 10);
-		// RCommand.setSegmentator(RCommand.UNIFORMLENGTH);
 		RCommand.setSegmentator(RCommand.ADAPTATIVE);
 
 		// Setup Blanks For Drawing & output
@@ -236,57 +228,64 @@ public class TireGenerator extends PApplet {
 
 		p = createFont("Arial", 14, false);
 		ControlFont cfLabel = new ControlFont(p);
+		
+		
 
 		// Lables
-		Textlabel appName = controlP5.addTextlabel("appName", "F.A.T. Wheels", 10, 10);// new
-																						// Textlabel(controlP5,
-																						// "FAT Wheels",
-																						// 100,
-																						// 100);
+		Textlabel appName = controlP5.addTextlabel("appName", "F.A.T. Wheels",
+				10, 10);// new
+						// Textlabel(controlP5,
+						// "FAT Wheels",
+						// 100,
+						// 100);
 		appName.setControlFont(cfLabel);
 		appName.setVisible(true);
 
-		Textlabel appTag = controlP5.addTextlabel("appTag", "Tire Generator\nWIP", 125, 10);// new
-																							// Textlabel(controlP5,
-																							// "FAT Wheels",
-																							// 100,
-																							// 100);
+		Textlabel appTag = controlP5.addTextlabel("appTag",
+				"Tire Generator\nWIP", 125, 10);// new
+												// Textlabel(controlP5,
+												// "FAT Wheels",
+												// 100,
+												// 100);
 		appTag.setControlFont(cf);
 		appTag.setVisible(true);
 
 		// Display Group
-		Group displayCtrls = controlP5.addGroup("Display Controls").setPosition(10, 305);
-		Toggle tHub = controlP5.addToggle("showHub", false, 5, 5, 30, 10).setMode(ControlP5.SWITCH);
+		Group displayCtrls = controlP5.addGroup("Display Controls")
+				.setPosition(10, 305);
+		Toggle tHub = controlP5.addToggle("showHub", false, 5, 5, 30, 10)
+				.setMode(ControlP5.SWITCH);
 		tHub.setGroup(displayCtrls);
 		tHub.captionLabel().setControlFont(cf);
 
-		Toggle tTire = controlP5.addToggle("showTire", true, 70, 5, 30, 10).setMode(
-				ControlP5.SWITCH);
+		Toggle tTire = controlP5.addToggle("showTire", true, 70, 5, 30, 10)
+				.setMode(ControlP5.SWITCH);
 		tTire.setGroup(displayCtrls);
 		tTire.captionLabel().setControlFont(cf);
 
-		Toggle tNormals = controlP5.addToggle("showNormals", true, 130, 5, 30, 10).setMode(
-				ControlP5.SWITCH);
+		Toggle tNormals = controlP5.addToggle("showNormals", true, 130, 5, 30,
+				10).setMode(ControlP5.SWITCH);
 		tNormals.setGroup(displayCtrls);
 		tNormals.captionLabel().setControlFont(cf);
 
-		Toggle tVerb = controlP5.addToggle("verbose", false, 5, 35, 30, 10).setMode(
-				ControlP5.SWITCH);
+		Toggle tVerb = controlP5.addToggle("verbose", false, 5, 35, 30, 10)
+				.setMode(ControlP5.SWITCH);
 		tVerb.setGroup(displayCtrls);
 		tVerb.captionLabel().setControlFont(cf);
 
-		Toggle tAdv = controlP5.addToggle("advCtrls", false, 70, 35, 30, 10).setMode(
-				ControlP5.SWITCH);
+		Toggle tAdv = controlP5.addToggle("advCtrls", false, 70, 35, 30, 10)
+				.setMode(ControlP5.SWITCH);
 		tAdv.setGroup(displayCtrls);
 		tAdv.captionLabel().setControlFont(cf);
 
-		Toggle tShowDebug = controlP5.addToggle("showDebug", true, 130, 35, 30, 10).setMode(
-				ControlP5.SWITCH);
+		Toggle tShowDebug = controlP5.addToggle("showDebug", true, 130, 35, 30,
+				10).setMode(ControlP5.SWITCH);
 		tShowDebug.setGroup(displayCtrls);
 		tShowDebug.captionLabel().setControlFont(cf);
 
 		// Output Group
-		Group outCtrls = controlP5.addGroup("Output Controls").setPosition(10, 250);
+		Group outCtrls = controlP5.addGroup("Output Controls").setPosition(10,
+				250);
 		Button bTireSave = controlP5.addButton("saveSTL", 1, 5, 5, 55, 15);
 		bTireSave.setGroup(outCtrls);
 		bTireSave.captionLabel().setControlFont(cf);
@@ -299,172 +298,166 @@ public class TireGenerator extends PApplet {
 		bPDFSave.setGroup(outCtrls);
 		bPDFSave.captionLabel().setControlFont(cf);
 
-		Button bScreenSave = controlP5.addButton("screenShot", 1, 5, 25, 75, 15);
+		Button bScreenSave = controlP5
+				.addButton("screenShot", 1, 5, 25, 75, 15);
 		bScreenSave.setGroup(outCtrls);
 		bScreenSave.captionLabel().setControlFont(cf); // saveImagePts
 
-		Toggle tRevSTL = controlP5.addToggle("revSTL", false, 180, 25, 30, 10).setMode(
-				ControlP5.SWITCH);
+		Toggle tRevSTL = controlP5.addToggle("revSTL", false, 180, 25, 30, 10)
+				.setMode(ControlP5.SWITCH);
 		tRevSTL.setGroup(outCtrls);
 		tRevSTL.captionLabel().setControlFont(cf);
 
 		// Advanced Controls Group
-		advCtrlsGrp = controlP5.addGroup("Advanced Controls").setPosition(width - 500 - 5, 20);
+		advCtrlsGrp = controlP5.addGroup("Advanced Controls").setPosition(
+				width - 500 - 5, 20);
 		advCtrlsGrp.setOpen(true);
 		advCtrlsGrp.setVisible(false);
 
-		Slider cMessageBorderSlider = controlP5
-				.addSlider("cMessageBorder", 1, 35, 5, 5, 5, 150, 10).setTriggerEvent(
-						Slider.RELEASE);
+		Slider cMessageBorderSlider = controlP5.addSlider("cMessageBorder", 1,
+				35, 5, 5, 5, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cMessageBorderSlider.setGroup(advCtrlsGrp);
 		cMessageBorderSlider.captionLabel().setControlFont(cf);
 
-		Slider cMeshSmoothSlider = controlP5.addSlider("cMeshSmoothNum", 0, 7, 3, 5, 20, 150, 10)
-				.setTriggerEvent(Slider.RELEASE);
+		Slider cMeshSmoothSlider = controlP5.addSlider("cMeshSmoothNum", 0, 7,
+				3, 5, 20, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cMeshSmoothSlider.setGroup(advCtrlsGrp);
 		cMeshSmoothSlider.snapToTickMarks(true);
 		cMeshSmoothSlider.setNumberOfTickMarks(8);
 		cMeshSmoothSlider.showTickMarks(false);
 		cMeshSmoothSlider.captionLabel().setControlFont(cf);
 
-		Slider cMeshChamfSlider = controlP5.addSlider("cMeshChamf", 0, 0.125f, 0.04f, 5, 35, 150,
-				10).setTriggerEvent(Slider.RELEASE);
+		Slider cMeshChamfSlider = controlP5.addSlider("cMeshChamf", 0, 0.125f,
+				0.04f, 5, 35, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cMeshChamfSlider.setGroup(advCtrlsGrp);
 		cMeshChamfSlider.captionLabel().setControlFont(cf);
 
-		Slider cStripThicknessSlider = controlP5.addSlider("cStripThickness", 1, 35, 10, 5, 50,
-				150, 10).setTriggerEvent(Slider.RELEASE);
+		Slider cStripThicknessSlider = controlP5.addSlider("cStripThickness",
+				1, 35, 10, 5, 50, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cStripThicknessSlider.setGroup(advCtrlsGrp);
 		cStripThicknessSlider.captionLabel().setControlFont(cf);
 
-		Slider cPathClipSlider = controlP5.addSlider("cPathClipAngle", .25f, 1, .75f, 5, 65, 150,
-				10).setTriggerEvent(Slider.RELEASE);
+		Slider cPathClipSlider = controlP5.addSlider("cPathClipAngle", .25f, 1,
+				.75f, 5, 65, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cPathClipSlider.setGroup(advCtrlsGrp);
 		cPathClipSlider.captionLabel().setControlFont(cf);
 
-		Slider cPathMinSegSlider = controlP5.addSlider("cPathMinSeg", .1f, 1, .25f, 5, 80, 150, 10)
-				.setTriggerEvent(Slider.RELEASE);
+		Slider cPathMinSegSlider = controlP5.addSlider("cPathMinSeg", .1f, 1,
+				.25f, 5, 80, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cPathMinSegSlider.setGroup(advCtrlsGrp);
 		cPathMinSegSlider.captionLabel().setControlFont(cf);
 
-		Slider cPathResampleSlider = controlP5.addSlider("cResamplePassNum", 0, 7, 3, 5, 95, 150,
-				10).setTriggerEvent(Slider.RELEASE);
+		Slider cPathResampleSlider = controlP5.addSlider("cResamplePassNum", 0,
+				7, 3, 5, 95, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cPathResampleSlider.setGroup(advCtrlsGrp);
 		cPathResampleSlider.snapToTickMarks(true);
 		cPathResampleSlider.setNumberOfTickMarks(8);
 		cPathResampleSlider.showTickMarks(false);
 		cPathResampleSlider.captionLabel().setControlFont(cf);
 
-		Slider cVorValleyEpSlider = controlP5.addSlider("cVoronoiValEps", 1, 15, 11, 5, 110, 150,
-				10).setTriggerEvent(Slider.RELEASE);
+		Slider cVorValleyEpSlider = controlP5.addSlider("cVoronoiValEps", 1,
+				15, 11, 5, 110, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cVorValleyEpSlider.setGroup(advCtrlsGrp);
 		cVorValleyEpSlider.setNumberOfTickMarks(15);
 		cVorValleyEpSlider.showTickMarks(false);
-		cVorValleyEpSlider.captionLabel().setControlFont(cf);
 
-		Slider cVorRoundSlider = controlP5.addSlider("cVoronoiRound", 1, 5, 2, 5, 125, 150, 10)
-				.setTriggerEvent(Slider.RELEASE);
+		Slider cVorRoundSlider = controlP5.addSlider("cVoronoiRound", 1, 5, 2,
+				5, 125, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cVorRoundSlider.setGroup(advCtrlsGrp);
 		cVorRoundSlider.setNumberOfTickMarks(5);
 		cVorRoundSlider.showTickMarks(false);
-		cVorRoundSlider.captionLabel().setControlFont(cf);
 
-		Slider cVoronoiTThreshSlider = controlP5.addSlider("cVoronoiTThresh", .1f, .75f, .52f, 5,
-				140, 150, 10).setTriggerEvent(Slider.RELEASE);
+		Slider cVoronoiTThreshSlider = controlP5.addSlider("cVoronoiTThresh",
+				.1f, .75f, .52f, 5, 140, 150, 10).setTriggerEvent(
+				Slider.RELEASE);
 		cVoronoiTThreshSlider.setGroup(advCtrlsGrp);
-		cVoronoiTThreshSlider.captionLabel().setControlFont(cf);
 
-		Slider cVorLetterSpaceSlider = controlP5.addSlider("cVoronoiLettter", .1f, 3, 1.75f, 5,
-				155, 150, 10).setTriggerEvent(Slider.RELEASE);
+		Slider cVorLetterSpaceSlider = controlP5.addSlider("cVoronoiLettter",
+				.1f, 3, 1.75f, 5, 155, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cVorLetterSpaceSlider.setGroup(advCtrlsGrp);
-		cVorLetterSpaceSlider.captionLabel().setControlFont(cf);
 
-		Slider cVorSearchSpaceSlider = controlP5.addSlider("cVoronoiValSearch", .1f, 10, 3, 5, 170,
-				150, 10).setTriggerEvent(Slider.RELEASE);
+		Slider cVorSearchSpaceSlider = controlP5.addSlider("cVoronoiValSearch",
+				.1f, 10, 3, 5, 170, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cVorSearchSpaceSlider.setGroup(advCtrlsGrp);
-		cVorSearchSpaceSlider.captionLabel().setControlFont(cf);
 
-		Slider cVorBlurNSlider = controlP5.addSlider("cVoronoiBNum", 1, 10, 4, 5, 185, 150, 10)
-				.setTriggerEvent(Slider.RELEASE);
+		Slider cVorBlurNSlider = controlP5.addSlider("cVoronoiBNum", 1, 10, 4,
+				5, 185, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cVorBlurNSlider.setGroup(advCtrlsGrp);
 		cVorBlurNSlider.setNumberOfTickMarks(15);
 		cVorBlurNSlider.showTickMarks(false);
-		cVorBlurNSlider.captionLabel().setControlFont(cf);
 
-		Slider cVorBlurSizeSlider = controlP5.addSlider("cVoronoiBSize", 1, 10, 5, 5, 200, 150, 10)
-				.setTriggerEvent(Slider.RELEASE);
+		Slider cVorBlurSizeSlider = controlP5.addSlider("cVoronoiBSize", 1, 10,
+				5, 5, 200, 150, 10).setTriggerEvent(Slider.RELEASE);
 		cVorBlurSizeSlider.setGroup(advCtrlsGrp);
 		cVorBlurSizeSlider.setNumberOfTickMarks(15);
 		cVorBlurSizeSlider.showTickMarks(false);
-		cVorBlurSizeSlider.captionLabel().setControlFont(cf);
 
 		String advDesText = "These are advanced controls.\nRebuild the tire to see the effect.\nChanging these may make or fix holes in the mesh.\nLook in the comments to see what they do.";
-		Textlabel advDesc = controlP5.addTextlabel("advDesText", advDesText, 0, 230);// new
-																						// Textlabel(controlP5,
-																						// "FAT Wheels",
-																						// 100,
-																						// 100);
+		Textlabel advDesc = controlP5.addTextlabel("advDesText", advDesText, 0,
+				230);// new
+						// Textlabel(controlP5,
+						// "FAT Wheels",
+						// 100,
+						// 100);
 		advDesc.setGroup(advCtrlsGrp);
-		advDesc.setControlFont(cf);
+
 		advDesc.setVisible(true);
 
 		// Tire Controls
-		Group messageCtrls = controlP5.addGroup("Tire Message").setPosition(10, 40);
+		Group messageCtrls = controlP5.addGroup("Tire Message").setPosition(10,
+				40);
 		textInput = controlP5.addTextfield("Message", 5, 25, 200, 15).setId(2);
 		// textInput.setColor(color(255, 255, 255));
 		textInput.setFocus(true);
 		textInput.setGroup(messageCtrls);
 		textInput.setAutoClear(false);
-		textInput.captionLabel().setControlFont(cf);
 
-		Bang openSVG = controlP5.addBang("openSVG", 5, 60, 30, 10).setTriggerEvent(Bang.RELEASE);
+		//TODO:
+		//Fix open SVG code. also broke in 2.0
+		Bang openSVG = controlP5.addBang("openSVG", 5, 60, 30, 10)
+				.setTriggerEvent(Bang.RELEASE); 
 		openSVG.setGroup(messageCtrls);
-		openSVG.captionLabel().setControlFont(cf);
 
 		Toggle tRep = controlP5.addToggle("repeat", false, 70, 60, 30, 10)
 				.setMode(ControlP5.SWITCH);
 		tRep.setGroup(messageCtrls);
-		tRep.captionLabel().setControlFont(cf);
 
 		Toggle tVert = controlP5.addToggle("vert", false, 120, 60, 33, 10)
 				.setMode(ControlP5.SWITCH);
 		tVert.setGroup(messageCtrls);
-		tVert.captionLabel().setControlFont(cf);
 
-		Slider tdSlider = controlP5.addSlider("TDepth", -.125f, .125f, .0625f, 5, 90, 150, 10)
+		Slider tdSlider = controlP5
+				.addSlider("TDepth", -.125f, .125f, .0625f, 5, 90, 150, 10)
 				.setId(1).setTriggerEvent(Slider.RELEASE);
 		tdSlider.setGroup(messageCtrls);
-		tdSlider.captionLabel().setControlFont(cf);
 
-		Slider tSpace = controlP5.addSlider("Spacing", 5, 50, 10, 5, 110, 150, 10).setId(5)
+		Slider tSpace = controlP5
+				.addSlider("Spacing", 5, 50, 10, 5, 110, 150, 10).setId(5)
 				.setTriggerEvent(Slider.RELEASE);
 		tSpace.setGroup(messageCtrls);
-		tSpace.captionLabel().setControlFont(cf);
 
-		Slider tStampW = controlP5.addSlider("stampWidth", 1, 10, 3, 5, 130, 150, 10).setId(6)
+		Slider tStampW = controlP5
+				.addSlider("stampWidth", 1, 10, 3, 5, 130, 150, 10).setId(6)
 				.setTriggerEvent(Slider.RELEASE);
 		tStampW.setGroup(messageCtrls);
-		tStampW.captionLabel().setControlFont(cf);
 
-		Slider tStampH = controlP5.addSlider("stampThickness", .125f, 1, .25f, 5, 150, 150, 10)
+		Slider tStampH = controlP5
+				.addSlider("stampThickness", .125f, 1, .25f, 5, 150, 150, 10)
 				.setId(7).setTriggerEvent(Slider.RELEASE);
 		tStampH.setGroup(messageCtrls);
-		tStampH.captionLabel().setControlFont(cf);
 
-		Toggle tTireBlocking = controlP5.addToggle("tireBlocking", true, 5, 170, 30, 10).setMode(
-				ControlP5.SWITCH);
+		Toggle tTireBlocking = controlP5.addToggle("tireBlocking", true, 5,
+				170, 30, 10).setMode(ControlP5.SWITCH);
 		tTireBlocking.setGroup(messageCtrls);
-		tTireBlocking.captionLabel().setControlFont(cf);
 
-		Toggle tTopBars = controlP5.addToggle("topBars", true, 180, 170, 30, 10).setMode(
-				ControlP5.SWITCH);
+		Toggle tTopBars = controlP5
+				.addToggle("topBars", true, 180, 170, 30, 10).setMode(
+						ControlP5.SWITCH);
 		tTopBars.setGroup(messageCtrls);
-		tTopBars.captionLabel().setControlFont(cf);
 
-		Toggle tStampAuto = controlP5.addToggle("autoStamp", false, 170, 60, 30, 10).setMode(
-				ControlP5.SWITCH);
+		Toggle tStampAuto = controlP5.addToggle("autoStamp", false, 170, 60,
+				30, 10).setMode(ControlP5.SWITCH);
 		tStampAuto.setGroup(messageCtrls);
-		tStampAuto.captionLabel().setControlFont(cf);
 
 		// File selector
 		list2 = controlP5.addDropdownList("blockingType", 85, 180, 75, 140);
@@ -480,15 +473,16 @@ public class TireGenerator extends PApplet {
 		reBuild.setGroup(messageCtrls);
 
 		// Message output
-		outputMSG = controlP5.addTextarea("Messages", messages, width - 200 - 5, 5, 200, height
-				- 10 - 12 - 5 - 10);
+		outputMSG = controlP5.addTextarea("Messages", messages,
+				width - 200 - 5, 5, 200, height - 10 - 12 - 5 - 10);
 		// outputMSG.setColorBackground(0xffffff);
 		outputMSG.captionLabel().setControlFont(cf);
 
 		String appStatusString = "Step 1 of 89:";
-		appStatus = controlP5.addTextlabel("appStatus", appStatusString, width - 10 - 265,
-				height - 5 - 10);// new Textlabel(controlP5, "FAT Wheels", 100,
-									// 100);
+		appStatus = controlP5.addTextlabel("appStatus", appStatusString,
+				width - 10 - 265, height - 5 - 10);// new Textlabel(controlP5,
+													// "FAT Wheels", 100,
+													// 100);
 		appStatus.setControlFont(cf);
 		appStatus.setVisible(true);
 
@@ -625,11 +619,12 @@ public class TireGenerator extends PApplet {
 	 * @param loadPath
 	 *            Path to parse.
 	 */
-	void fileSelected(File loadPath) {
+	public void fileSelected(File loadPath) {
 		if (loadPath == null) {
 			sendMessage("No file was selected...");
 		} else {
 			if (loadPath.getAbsolutePath().endsWith("svg")) {
+				sendMessage(loadPath.getAbsolutePath()+"");
 				svg = RG.loadShape(loadPath.getAbsolutePath());
 				textLoaded = false;
 				shapeLoaded = true;
@@ -660,14 +655,26 @@ public class TireGenerator extends PApplet {
 			if ((abs(t.a.x) != DSIZE && abs(t.a.y) != DSIZE)) {
 				beginShape(TRIANGLES);
 				vertex(map(t.a.x, 0, build.getTreadX(), 0, width - 40),
-						map(t.a.y, 0, build.getTreadY(), 0,
-								map(build.getTreadY(), 0, build.getTreadX(), 0, width - 40)));
+						map(t.a.y,
+								0,
+								build.getTreadY(),
+								0,
+								map(build.getTreadY(), 0, build.getTreadX(), 0,
+										width - 40)));
 				vertex(map(t.b.x, 0, build.getTreadX(), 0, width - 40),
-						map(t.b.y, 0, build.getTreadY(), 0,
-								map(build.getTreadY(), 0, build.getTreadX(), 0, width - 40)));
+						map(t.b.y,
+								0,
+								build.getTreadY(),
+								0,
+								map(build.getTreadY(), 0, build.getTreadX(), 0,
+										width - 40)));
 				vertex(map(t.c.x, 0, build.getTreadX(), 0, width - 40),
-						map(t.c.y, 0, build.getTreadY(), 0,
-								map(build.getTreadY(), 0, build.getTreadX(), 0, width - 40)));
+						map(t.c.y,
+								0,
+								build.getTreadY(),
+								0,
+								map(build.getTreadY(), 0, build.getTreadX(), 0,
+										width - 40)));
 				// vertex(map(t.c.x, 0, build.getTreadX(), 0, width-40),
 				// map(t.c.y, 0, build.getTreadY(), 0, 200));
 				endShape();
@@ -871,19 +878,19 @@ public class TireGenerator extends PApplet {
 	public void saveSTL() {
 		sendMessage("Saving STL.");
 		tireDraw.getScaled(1.0f / D_SF_2).saveAsSTL(
-				sketchPath("output/stl/" + year() + "_" + month() + "_" + day() + "_" + hour()
-						+ "_" + minute() + "_" + frameCount + "_" + fileName + ".stl"), !revSTL);
+				sketchPath("output/stl/" + year() + "_" + month() + "_" + day()
+						+ "_" + hour() + "_" + minute() + "_" + frameCount
+						+ "_" + fileName + ".stl"), !revSTL);
 	}
 
 	/**
 	 * Save the hub to a stl.
 	 */
 	public void saveHub() {
-		hubDraw.getScaled(1.0f / D_SF_2)
-				.saveAsSTL(
-						sketchPath("output/stl/" + year() + "_" + month() + "_" + day() + "_"
-								+ hour() + "_" + minute() + "_" + frameCount + "_" + fileName
-								+ "_hub.stl"), !revSTL);
+		hubDraw.getScaled(1.0f / D_SF_2).saveAsSTL(
+				sketchPath("output/stl/" + year() + "_" + month() + "_" + day()
+						+ "_" + hour() + "_" + minute() + "_" + frameCount
+						+ "_" + fileName + "_hub.stl"), !revSTL);
 	}
 
 	/***
@@ -891,17 +898,20 @@ public class TireGenerator extends PApplet {
 	 */
 	public void screenShot() {
 		sendMessage("Screen Captured");
-		save("output/screenShots/" + year() + "_" + month() + "_" + day() + "_" + hour() + "_"
-				+ minute() + "_" + frameCount + "_" + fileName + ".png");
+		save("output/screenShots/" + year() + "_" + month() + "_" + day() + "_"
+				+ hour() + "_" + minute() + "_" + frameCount + "_" + fileName
+				+ ".png");
 	}
 
 	/**
 	 * Save a PDF of the DT w/ raised areas in grey.
 	 */
 	public void savePDF() {
-		PGraphics pdf = createGraphics(floor(build.getTreadX()), floor(build.getTreadY()), PDF,
-				sketchPath("output/pdf/" + year() + "_" + month() + "_" + day() + "_" + hour()
-						+ "_" + minute() + "_" + frameCount + "_" + fileName + ".pdf"));
+		PGraphics pdf = createGraphics(floor(build.getTreadX()),
+				floor(build.getTreadY()), PDF, sketchPath("output/pdf/"
+						+ year() + "_" + month() + "_" + day() + "_" + hour()
+						+ "_" + minute() + "_" + frameCount + "_" + fileName
+						+ ".pdf"));
 		pdf.beginDraw();
 
 		pdf.noStroke();
@@ -955,7 +965,8 @@ public class TireGenerator extends PApplet {
 	 *            Point 1 y value.
 	 * @return
 	 */
-	public float getJointAngle(float x0, float y0, float x1, float y1, float x2, float y2) {
+	public float getJointAngle(float x0, float y0, float x1, float y1,
+			float x2, float y2) {
 		float anglei = 0;
 		float dxBA = x1 - x0 + 0.00001f;
 		float dyBA = y1 - y0;
@@ -1079,7 +1090,8 @@ public class TireGenerator extends PApplet {
 			double pX2 = poly.vertices.get(j).x;
 			double pY2 = poly.vertices.get(j).y;
 
-			if ((pY < y && pY2 >= y || pY2 < y && pY >= y) && (pX <= x || pX2 <= x)) {
+			if ((pY < y && pY2 >= y || pY2 < y && pY >= y)
+					&& (pX <= x || pX2 <= x)) {
 				inside ^= (pX + (y - pY) / (pY2 - pY) * (pX2 - pX) < x);
 			}
 			j = i;
@@ -1127,8 +1139,9 @@ public class TireGenerator extends PApplet {
 
 		ptsImg.loadPixels();
 
-		ptsImg.save("output/blur/" + year() + "_" + month() + "_" + day() + "_" + hour() + "_"
-				+ minute() + "_" + frameCount + "_" + fileName + ".png");
+		ptsImg.save("output/blur/" + year() + "_" + month() + "_" + day() + "_"
+				+ hour() + "_" + minute() + "_" + frameCount + "_" + fileName
+				+ ".png");
 
 		return ptsImg;
 	}

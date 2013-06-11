@@ -13,11 +13,20 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 
-import processing.core.*;
-
-import toxi.geom.*;
-import toxi.geom.mesh.*;
-import toxi.geom.mesh2d.*;
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PGraphics;
+import processing.core.PImage;
+import toxi.geom.Polygon2D;
+import toxi.geom.Rect;
+import toxi.geom.Triangle2D;
+import toxi.geom.Vec2D;
+import toxi.geom.Vec3D;
+import toxi.geom.mesh.Face;
+import toxi.geom.mesh.TriangleMesh;
+import toxi.geom.mesh.Vertex;
+import toxi.geom.mesh.WETriangleMesh;
+import toxi.geom.mesh2d.Voronoi;
 
 //===============================================================
 //Started at 1722 lines
@@ -1855,17 +1864,24 @@ class ReBuilderv2 extends Thread {
 		for (Polygon2D region : voronoiBuild.getRegions()) {
 			prog++;
 			for (Vec2D v : region.vertices) {
-				// round them slightly was 100000
 				v.x = (float) (Math.round(v.x * Math.pow(10, sketchRef.cVoronoiRound)) / Math
-						.pow(10, sketchRef.cVoronoiRound)); 
-				
+						.pow(10, sketchRef.cVoronoiRound)); // round
+				// them
+				// slightly
+				// was
+				// 100000
 				v.y = (float) (Math.round(v.y * Math.pow(10, sketchRef.cVoronoiRound)) / Math
 						.pow(10, sketchRef.cVoronoiRound)); // round
 				// if its in the bounds, if we haven't picked it already
 				// (rounding could group some points)
 				// and we pick every 5th point to just reduce the inital set a
 				// little
-				if (bound.containsPoint(v) && uniqueVerts.contains(v) == false) {
+				if (bound.containsPoint(v) && uniqueVerts.contains(v) == false) { // &&
+																					// n
+																					// %
+																					// 5
+																					// ==
+																					// 0
 					uniqueVerts.add(v);
 				}
 			}

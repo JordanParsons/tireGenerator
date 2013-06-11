@@ -2,11 +2,11 @@ package tireGenerator;
 
 import processing.core.PImage;
 
-/***
- * Fast Gaussian Blur v1.3 Edited slightly for usability.
- * 
- * @author Mario Klingemann <http://incubator.quasimondo.com>
- */
+// ===============================================================
+// Fast Gaussian Blur v1.3 
+// by Mario Klingemann <http://incubator.quasimondo.com> 
+// Edited slightly as needed.
+// ===============================================================
 public class Convolver {
 	int radius;
 	int kernelSize;
@@ -79,7 +79,6 @@ public class Convolver {
 		int g[] = new int[wh];
 		int b[] = new int[wh];
 
-		// Magic starts here
 		for (i = 0; i < wh; i++) {
 			ri = pix[i];
 			r[i] = (ri & 0xff0000) >> 16;
@@ -141,6 +140,5 @@ public class Convolver {
 			}
 			yi += iw;
 		}
-		// Magic ends here
 	}
 }
